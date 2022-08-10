@@ -1,0 +1,46 @@
+# 配置端口
+server:
+  port: 8862
+spring:
+  main:
+    # 解决Bean重复定义问题
+    allow-bean-definition-overriding: true
+    allow-circular-references: true # 解决重复依赖报错
+  application:
+    name: dubbo-consumer
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.100.179:8848
+        service: dubbo-consumer
+        namespace: dev
+        group: DEV_GROUP
+    sentinel:
+      # 取消控制台懒加载
+      eager: true
+      transport:
+        # 控制台地址
+        dashboard: 192.168.100.179:8080
+        # 默认8719端口，假如被占用了会自动从8719端口+1进行扫描，直到找到未被占用的 端口
+        port: 8719
+dubbo:
+  registries:
+    consumer1:
+      register: false
+      address: nacos://192.168.100.179:8848
+      default: true
+    consumer2:
+      register: false
+      address: zookeeper://192.168.100.179:2181
+  # 配置服务信息
+  application:
+    name: dubbo-consumer
+    # 禁用QOS同一台机器可能会有端口冲突现象
+    qos-enable: false
+    qos-accept-foreign-ip: false
+  # 配置注册中心
+  # 设置超时时间
+  consumer:
+    timeout: 4000
+    check: false # 默认true.服务启动时候检查是否可用,服务不可用时无法启动项目, false则不检查
+    retries: 2 # 服务重试次数

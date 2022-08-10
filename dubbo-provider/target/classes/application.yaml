@@ -1,0 +1,57 @@
+# 配置端口
+server:
+  port: 8861
+spring:
+  main:
+    # 解决Bean重复定义问题
+    allow-bean-definition-overriding: true
+    allow-circular-references: true # 解决重复依赖报错
+  application:
+    name: dubbo-provider
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.100.179:8848
+        service: dubbo-provider
+        namespace: dev
+        group: DEV_GROUP
+    sentinel:
+      # 取消控制台懒加载
+      eager: true
+      transport:
+        # 控制台地址
+        dashboard: 192.168.100.179:8080
+        # 默认8719端口，假如被占用了会自动从8719端口+1进行扫描，直到找到未被占用的 端口
+        port: 8719
+      log:
+        dir: D:\software\sentinel\log\sentinel-log
+#      datasource:
+#        ds:
+#          nacos:
+#            server-addr: 192.168.100.179:8848
+#            data-id: ${spring.application.name}-sentinel
+#            namespace: dev
+#            group-id: DEFAULT_GROUP
+#            data-type: json
+#            rule-type: flow
+dubbo:
+  registries:
+    provider1:
+      register: true
+      address: nacos://192.168.100.179:8848
+      default: true
+    provider2:
+      register: true
+      address: zookeeper://192.168.100.179:2181
+  # 配置服务信息
+  application:
+    name: dubbo-provider
+    # 禁用QOS同一台机器可能会有端口冲突现象
+    qos-enable: false
+    qos-accept-foreign-ip: false
+  # 设置协议-协议由提供方指定消费方被动接受
+  scan:
+    base-packages: com.dubbo.demo.service
+  protocol:
+    name: dubbo
+    port: 20880
